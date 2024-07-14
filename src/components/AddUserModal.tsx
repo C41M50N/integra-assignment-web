@@ -22,6 +22,9 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as api from "@/lib/api"
+
 
 type Props = {
   state: ModalState;
@@ -29,24 +32,34 @@ type Props = {
 
 export default function AddUserModal({ state }: Props) {
 
+  const queryClient = useQueryClient();
+
   const form = useForm<z.infer<typeof CreateUserSchema>>({
     resolver: zodResolver(CreateUserSchema),
     defaultValues: {
       first_name: "",
       last_name: "",
-      email: "",
       department: ""
     }
   });
 
-  const { isLoading: isAddUserLoading, mutate: addUser } = useSWR('', () => {}, {
-    onError(err, key, config) {
-      toast({})
+  const { isPending: isAddUserLoading, mutateAsync: addUser } = useMutation({
+    mutationKey: ['addUser'],
+    mutationFn: api.addUser,
+    onError(err) {
+      toast({
+        variant: 'destructive',
+        title: `Error: ${err.message}`
+      })
     },
-    onSuccess(data, key, config) {
+    onSuccess() {
       state.set('closed')
-      toast({})
+      toast({
+        variant: "default",
+        title: `Successfully created user: ${form.getValues().first_name} ${form.getValues().last_name}`
+      })
       form.reset({})
+      queryClient.invalidateQueries({ queryKey: ['getAllUsers'] })
     },
   })
 
@@ -85,20 +98,6 @@ export default function AddUserModal({ state }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="email"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>

@@ -24,9 +24,9 @@ export const UserSchema = z.object({
   last_name: z.string(),
   email: z.string().email(),
   user_status: z.enum(['I', 'A', 'T']),
-  department: z.string().optional()
+  department: z.string()
 });
 
-export const CreateUserSchema = UserSchema.omit({ id: true, user_name: true, user_status: true });
+export const CreateUserSchema = UserSchema.omit({ id: true, email: true, user_name: true, user_status: true });
 export const EditUserSchema = UserSchema.omit({ user_name: true });
 
