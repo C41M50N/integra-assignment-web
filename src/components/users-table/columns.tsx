@@ -38,28 +38,6 @@ function UserStatusBadge({ status }: UserStatusBadgeProps) {
       <span className='size-2 rounded-full bg-red-500'></span>
     )
   }
-
-  switch (status) {
-    case "A":
-      return (
-        <span className='size-2 rounded-full bg-green-500'></span>
-      )
-
-    case "I":
-      return (
-        <span className='size-2 rounded-full bg-gray-500'></span>
-      )
-
-    case "T":
-      return (
-        <span className='size-2 rounded-full bg-red-500'></span>
-      )
-  
-    default:
-      return (
-        <></>
-      )
-  }
 }
 
 export const columns: ColumnDef<User>[] = [
